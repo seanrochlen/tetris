@@ -1,0 +1,78 @@
+#container {
+  display: flex;
+  align-items: center;
+  height: calc(100vh - 100px);
+
+}
+h1 {
+  text-align: center;
+  margin: 20px 0 0 0;
+}
+#innerContainer {
+  display: flex;
+  margin: 0 auto;
+}
+#scoreboard {
+  margin-right: 50px;
+  border: 1px solid #cccccc;
+  height: fit-content;
+  padding: 20px;
+  width: 150px;
+  text-align: center;
+}
+#scoreboard h2 {
+  font-size: 24px;
+  text-decoration: underline;
+}
+#scoreboard h2:first-child {
+  margin-top: 0;
+}
+#gameboard {
+  background: #f8f8f8;
+  width: 400px;
+  height: 800px;
+  position: relative;
+  border: 1px solid #ccc;
+}
+#nextPieceandCountdown {
+
+}
+#nextPiece {
+  margin-left: 50px;
+  border: 1px solid #cccccc;
+  padding: 20px;
+  width: 160px;
+  height: 160px;
+  text-align: center;
+  background: #f8f8f8;
+  position: relative;
+}
+#countdown {
+  border: 1px solid #cccccc;
+  width: 160px;
+  height: 50rpx;
+  margin: 50px 0 0 50px;
+  padding: 20px;
+  font-size: 48px;
+  text-align: center;
+}
+.block {
+  width: 40px;
+  height: 40px;
+  border: 1px solid #e8e8e8;
+  position: absolute;
+}
+.active, .placed {
+  z-index: 1;
+}
+.hidden {
+  display: none;
+}
+.gameover {
+  background-color: #cccccc !important;
+  transition: background-color 1s ease-in-out;
+}
+footer p {
+  text-align: center;
+  font-size: 12px;
+}
