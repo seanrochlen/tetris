@@ -9,6 +9,7 @@ class Tetris {
     this.nextPiece = document.getElementById('nextPiece');
     this.activeGamePiece;
     this.level = 1;
+    this.score = 0;
     // setup game pieces and coordinates based on json data
     // since this program is not running on a server, the data will be here for now
     const data = {
@@ -23,9 +24,9 @@ class Tetris {
         [{x:3, y:-2},{x:3, y:-1},{x:3, y:0},{x:4, y:-2}]
       ],
       l: [
-        [{x:3, y:-1},{x:4, y:-1},{x:5, y:-1},{x:5, y:-2}],
+        [{x:3, y:-2},{x:4, y:-2},{x:5, y:-2},{x:5, y:-1}],
         [{x:3, y:-2},{x:4, y:-2},{x:4, y:-1},{x:4, y:0}],
-        [{x:3, y:-1},{x:4, y:-1},{x:5, y:-1},{x:5, y:-2}],
+        [{x:3, y:-1},{x:4, y:-1},{x:5, y:-1},{x:3, y:-2}],
         [{x:3, y:-2},{x:3, y:-1}, {x:3, y:0},{x:4, y:0}]
       ],
       o: [
@@ -133,6 +134,10 @@ class GamePiece extends Tetris {
   addActiveGamePiece = () => {
     // randomly choose the next gamepiece
     this.activeGamePiece = this.nextGamePiece;
+    // need to safeguard against erratic movement so we'll reset these values here
+    this.activeGamePiece.pos = 0;
+    this.activeGamePiece.x = 0;
+    this.activeGamePiece.y = 0;
 
     // loop through game peice's coords and add a block at each coordinate on the board
     for (let i=0; i<4; i++) {
@@ -251,11 +256,12 @@ class GamePiece extends Tetris {
         break;
       case 'down':
         this.activeGamePiece.y++;
+
+      this.checkRowsForScoring();
     }
   }
   flipActiveGamePiece = () => {
     const activeBlocks = document.querySelectorAll('.active');
-    activeBlocks.forEach((block) => block.remove());
     const numOfPositions = this.activeGamePiece.coords.length;
     // if there is another position available, change position on active game piece otherwise reset back to 0
     if ((numOfPositions - 1) > this.activeGamePiece.pos) {
@@ -263,6 +269,15 @@ class GamePiece extends Tetris {
     } else {
       this.activeGamePiece.pos = 0;
     }
+
+    // check for collisions to make sure flip is viable
+    for (let i=0; i<4; i++) {
+      const x = this.activeGamePiece.coords[this.activeGamePiece.pos][i].x + this.activeGamePiece.x;
+      const y = this.activeGamePiece.coords[this.activeGamePiece.pos][i].y + this.activeGamePiece.y;
+      if (x < 0 || x > 9 || y > 19 || document.querySelector('[data-x="' + x + '"][data-y="' + y + '"][placed=true]')) return;
+    }
+    activeBlocks.forEach((block) => block.remove());
+
     // loop through game peice's coords and add a block at each coordinate on the board
     for (let i=0; i<4; i++) {
       const div = document.createElement('div');
@@ -279,6 +294,44 @@ class GamePiece extends Tetris {
         div.classList.add('hidden');
       this.gameboard.appendChild(div);
     }
+  }
+  checkRowsForScoring = () => {
+    let scoreRows = [];
+    // first check and see if there are any full block rows and then remove them, adjust all blocks down that need to, and adjust score
+    for (let i=0; i<20; i++) {
+      let count = 0;
+      for (let j=0; j<10; j++) {
+        if (document.querySelector('[data-x="' + j + '"][data-y="' + i + '"][placed=true]')) {
+          count++;
+          // if the count reached the max in the row, then score!
+          if (count === 10) {
+            scoreRows.push(i);
+            this.score++;
+            document.getElementById('score').innerText = this.score;
+          }
+        }
+      }
+    }
+    scoreRows.sort();
+
+    scoreRows.forEach((y) => {
+      this.handleScore(y);
+    })
+  }
+  handleScore = (y) => {
+    for (let i=0; i<10; i++) {
+      document.querySelector('[data-x="' + i + '"][data-y="' + y + '"][placed=true]').remove();
+    }
+    const placedBlocks = document.querySelectorAll('[placed=true]');
+    placedBlocks.forEach((block) => {
+      let dataX =  parseInt(block.getAttribute('data-x'), 10);
+      let dataY =  parseInt(block.getAttribute('data-y'), 10);
+
+      if (dataY < y) {
+        block.setAttribute('data-y', dataY + 1);
+        block.style.top = (dataY + 1) * 40 + 'px';
+      }
+    });
   }
   newGamePiece = (activeBlocks) => {
     let gameover = false;
