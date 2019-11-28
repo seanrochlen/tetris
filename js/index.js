@@ -9,14 +9,51 @@ class Tetris {
     this.nextPiece = document.getElementById('nextPiece');
     this.activeGamePiece;
     this.level = 1;
+    // setup game pieces and coordinates based on json data
+    // since this program is not running on a server, the data will be here for now
+    const data = {
+      i: [
+        [{x:3, y:-1},{x:4, y:-1},{x:5, y:-1},{x:6, y:-1}],
+        [{x:3, y:-1},{x:3, y:0},{x:3, y:1},{x:3, y:2}]
+      ],
+      j: [
+        [{x:3, y:-2},{x:4, y:-2},{x:5, y:-2},{x:5, y:-1}],
+        [{x:4, y:-2},{x:4, y:-1},{x:4, y:0},{x:3, y:0}],
+        [{x:3, y:-2},{x:3, y:-1},{x:4, y:-1},{x:5, y:-1}],
+        [{x:3, y:-2},{x:3, y:-1},{x:3, y:0},{x:4, y:-2}]
+      ],
+      l: [
+        [{x:3, y:-1},{x:4, y:-1},{x:5, y:-1},{x:5, y:-2}],
+        [{x:3, y:-2},{x:4, y:-2},{x:4, y:-1},{x:4, y:0}],
+        [{x:3, y:-1},{x:4, y:-1},{x:5, y:-1},{x:5, y:-2}],
+        [{x:3, y:-2},{x:3, y:-1}, {x:3, y:0},{x:4, y:0}]
+      ],
+      o: [
+        [{x:4, y:-2},{x:4, y:-1},{x:5, y:-2},{x:5, y:-1}]
+      ],
+      s: [
+        [{x:4, y:-2},{x:5, y:-2},{x:3, y:-1},{x:4, y:-1}],
+        [{x:3, y: -2},{x:3, y: -1},{x:4, y:-1},{x:4, y:0}]
+      ],
+      t: [
+        [{x:3, y:-2},{x:4, y:-2},{x:5, y:-2},{x:4, y:-1}],
+        [{x:4, y:-2},{x:4, y:-1},{x:4, y:0},{x:3, y:-1}],
+        [{x:4, y: -2},{x:3, y:-1},{x:4, y:-1},{x:5, y:-1}],
+        [{x:3, y: -2},{x:3, y:-1},{x:3, y:0},{x:4, y:-1}]
+      ],
+      z: [
+        [{x:3, y:-2},{x:4, y:-2},{x:4, y:-1},{x:5, y:-1}],
+        [{x:4, y:-2},{x:4, y:-1},{x:3, y:-1},{x:3, y:0}]
+      ]
+    };
     this.pieces = [
-      { name: 'i-block', coords: [{x:3, y:-1}, {x:4, y:-1}, {x:5, y:-1}, {x:6, y:-1}], color: '#00f0ef', length: 4 },
-      { name: 'j-block', coords: [{x:3, y:-2}, {x:3, y:-1}, {x:4, y:-1}, {x:5, y:-1}], color: '#1300e6', length: 3 },
-      { name: 'l-block', coords: [{x:3, y:-1}, {x:4, y:-1}, {x:5, y:-1}, {x:5, y:-2}], color: '#f09f01', length: 3 },
-      { name: 'o-block', coords: [{x:4, y:-2}, {x:4, y:-1}, {x:5, y:-2}, {x:5, y:-1}], color: '#f0ef00', length: 2 },
-      { name: 's-block', coords: [{x:3, y:-1}, {x:4, y:-1}, {x:4, y:-2}, {x:5, y:-2}], color: '#00f000', length: 3 },
-      { name: 't-block', coords: [{x:3, y:-1}, {x:4, y:-1}, {x:4, y:-2}, {x:5, y:-1}], color: '#a000f0', length: 3 },
-      { name: 'z-block', coords: [{x:3, y:-2}, {x:4, y:-2}, {x:4, y:-1}, {x:5, y:-1}], color: '#f00000', length: 3 }
+      { name: 'i-block', coords: data.i, color: '#00f0ef', length: 4, x: 0, y: 0, pos: 0 },
+      { name: 'j-block', coords: data.j, color: '#1300e6', length: 3, x: 0, y: 0, pos: 0 },
+      { name: 'l-block', coords: data.l, color: '#f09f01', length: 3, x: 0, y: 0, pos: 0 },
+      { name: 'o-block', coords: data.o, color: '#f0ef00', length: 2, x: 0, y: 0, pos: 0 },
+      { name: 's-block', coords: data.s, color: '#00f000', length: 3, x: 0, y: 0, pos: 0 },
+      { name: 't-block', coords: data.t, color: '#a000f0', length: 3, x: 0, y: 0, pos: 0 },
+      { name: 'z-block', coords: data.z, color: '#f00000', length: 3, x: 0, y: 0, pos: 0 }
     ];
     this.nextGamePiece = this.generateRandomGamePiece();
   }
@@ -71,7 +108,7 @@ class Tetris {
     document.addEventListener('keydown', (e) => {
       if (e.key === 'ArrowLeft') gamepiece.handleMove('left');
       if (e.key === 'ArrowRight') gamepiece.handleMove('right');
-      if (e.key === 'ArrowUp') gamepiece.handleMove('up');
+      if (e.key === 'ArrowUp') gamepiece.flipActiveGamePiece();
       if (e.key === 'ArrowDown') gamepiece.handleMove('down');
     });
 
@@ -103,11 +140,11 @@ class GamePiece extends Tetris {
       div.classList.add('block');
       div.classList.add('active')
       div.classList.add('hidden');
-      div.style.top = this.activeGamePiece.coords[i].y * 40 + 'px';
-      div.style.left = this.activeGamePiece.coords[i].x * 40 + 'px';
+      div.style.top = this.activeGamePiece.coords[0][i].y * 40 + 'px';
+      div.style.left = this.activeGamePiece.coords[0][i].x * 40 + 'px';
       div.style.backgroundColor = this.activeGamePiece.color;
-      div.setAttribute('data-x', this.activeGamePiece.coords[i].x);
-      div.setAttribute('data-y', this.activeGamePiece.coords[i].y);
+      div.setAttribute('data-x', this.activeGamePiece.coords[0][i].x);
+      div.setAttribute('data-y', this.activeGamePiece.coords[0][i].y);
       this.gameboard.appendChild(div);
     }
     this.addNextGamePiece();
@@ -134,8 +171,8 @@ class GamePiece extends Tetris {
       if (this.nextGamePiece.length === 3) {
         topAdjustment = 60;
       }
-      div.style.top = (this.nextGamePiece.coords[i].y * 40 + 80) + topAdjustment + 'px';
-      div.style.left = (this.nextGamePiece.coords[i].x * 40 - 80) + leftAdjustment + 'px';
+      div.style.top = (this.nextGamePiece.coords[0][i].y * 40 + 80) + topAdjustment + 'px';
+      div.style.left = (this.nextGamePiece.coords[0][i].x * 40 - 80) + leftAdjustment + 'px';
       div.style.backgroundColor = this.nextGamePiece.color;
       this.nextPiece.appendChild(div);
     }
@@ -202,6 +239,42 @@ class GamePiece extends Tetris {
           block.style.top = parseInt(block.style.top, 10) + 40 + 'px';
           block.setAttribute('data-y', y + 1);
       }
+    }
+
+    // adjust for flipping the activeGamePiece x and y
+    switch (direction) {
+      case 'left':
+        this.activeGamePiece.x--;
+        break;
+      case 'right':
+        this.activeGamePiece.x++;
+        break;
+      case 'down':
+        this.activeGamePiece.y++;
+    }
+  }
+  flipActiveGamePiece = () => {
+    const activeBlocks = document.querySelectorAll('.active');
+    activeBlocks.forEach((block) => block.remove());
+    const numOfPositions = this.activeGamePiece.coords.length;
+    // if there is another position available, change position on active game piece otherwise reset back to 0
+    if ((numOfPositions - 1) > this.activeGamePiece.pos) {
+      this.activeGamePiece.pos++;
+    } else {
+      this.activeGamePiece.pos = 0;
+    }
+    // loop through game peice's coords and add a block at each coordinate on the board
+    for (let i=0; i<4; i++) {
+      const div = document.createElement('div');
+      div.classList.add('block');
+      div.classList.add('active')
+      //div.classList.add('hidden');
+      div.style.top = this.activeGamePiece.coords[this.activeGamePiece.pos][i].y * 40 + (40 * this.activeGamePiece.y) + 'px';
+      div.style.left = this.activeGamePiece.coords[this.activeGamePiece.pos][i].x * 40 + (40 * this.activeGamePiece.x) + 'px';
+      div.style.backgroundColor = this.activeGamePiece.color;
+      div.setAttribute('data-x', this.activeGamePiece.coords[this.activeGamePiece.pos][i].x);
+      div.setAttribute('data-y', this.activeGamePiece.coords[this.activeGamePiece.pos][i].y);
+      this.gameboard.appendChild(div);
     }
   }
   newGamePiece = (activeBlocks) => {
