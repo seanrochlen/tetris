@@ -140,11 +140,11 @@ class GamePiece extends Tetris {
       div.classList.add('block');
       div.classList.add('active')
       div.classList.add('hidden');
-      div.style.top = this.activeGamePiece.coords[0][i].y * 40 + 'px';
-      div.style.left = this.activeGamePiece.coords[0][i].x * 40 + 'px';
+      div.style.top = this.activeGamePiece.coords[this.activeGamePiece.pos][i].y * 40 + 'px';
+      div.style.left = this.activeGamePiece.coords[this.activeGamePiece.pos][i].x * 40 + 'px';
       div.style.backgroundColor = this.activeGamePiece.color;
-      div.setAttribute('data-x', this.activeGamePiece.coords[0][i].x);
-      div.setAttribute('data-y', this.activeGamePiece.coords[0][i].y);
+      div.setAttribute('data-x', this.activeGamePiece.coords[this.activeGamePiece.pos][i].x);
+      div.setAttribute('data-y', this.activeGamePiece.coords[this.activeGamePiece.pos][i].y);
       this.gameboard.appendChild(div);
     }
     this.addNextGamePiece();
@@ -268,12 +268,15 @@ class GamePiece extends Tetris {
       const div = document.createElement('div');
       div.classList.add('block');
       div.classList.add('active')
-      //div.classList.add('hidden');
       div.style.top = this.activeGamePiece.coords[this.activeGamePiece.pos][i].y * 40 + (40 * this.activeGamePiece.y) + 'px';
       div.style.left = this.activeGamePiece.coords[this.activeGamePiece.pos][i].x * 40 + (40 * this.activeGamePiece.x) + 'px';
       div.style.backgroundColor = this.activeGamePiece.color;
-      div.setAttribute('data-x', this.activeGamePiece.coords[this.activeGamePiece.pos][i].x);
-      div.setAttribute('data-y', this.activeGamePiece.coords[this.activeGamePiece.pos][i].y);
+      const x = this.activeGamePiece.coords[this.activeGamePiece.pos][i].x + this.activeGamePiece.x;
+      const y = this.activeGamePiece.coords[this.activeGamePiece.pos][i].y + this.activeGamePiece.y;
+      div.setAttribute('data-x', x);
+      div.setAttribute('data-y', y);
+      if (y < 0)
+        div.classList.add('hidden');
       this.gameboard.appendChild(div);
     }
   }
