@@ -102,6 +102,54 @@ class Tetris {
   start = () => {
     // insert 40px x 40px blocks into the gameboard
     this.setupGameBoard();
+
+    const modal = document.getElementById('modal');
+    const welcome = document.getElementById('welcome');
+    const gameover = document.getElementById('gameover');
+    const start = document.getElementById('start');
+    const restart = document.getElementById('restart');
+    let started = 0;
+
+    start.addEventListener('click', () => {
+      started++;
+      if (started === 1) {
+        modal.classList.add('fadeout');
+        window.setTimeout(() => {
+          modal.classList.add('hidden');
+          welcome.classList.add('hidden');
+          gameover.classList.remove('hidden');
+          started = 0;
+          this.newGame();
+        }, 1000)
+      }
+    });
+
+    restart.addEventListener('click', () => {
+      started++;
+      if (started === 1) {
+        const gameoverBlocks = document.querySelectorAll('.gameover');
+        modal.classList.remove('fadein');
+        modal.classList.add('fadeout');
+        gameoverBlocks.forEach((block) => {
+          block.classList.add('fadeout');
+        });
+        window.setTimeout(() => {
+          gameoverBlocks.forEach((block) => {
+            block.remove();
+          });
+          modal.classList.add('hidden');
+          gameover.classList.remove('hidden');
+          started = 0;
+          this.level = 1;
+          this.score = 0;
+          document.getElementById('level').innerText = 1;
+          document.getElementById('score').innerText = 0;
+          this.newGame();
+        }, 1000)
+      }
+    });
+  }
+  newGame = () => {
     // add an active gamepiece
     const gamepiece = new GamePiece();
     gamepiece.addActiveGamePiece();
@@ -123,6 +171,16 @@ class Tetris {
       if (block.getAttribute('placed'))
         block.classList.add('gameover');
     });
+    window.setTimeout(() => {
+      const modal = document.getElementById('modal')
+      const start = document.getElementById('start');
+      const gameover = document.getElementById('gameover');
+      const highscore = document.getElementById('highscore');
+      modal.classList.remove('fadeout');
+      modal.classList.remove('hidden');
+      modal.classList.add('fadein');
+      highscore.innerText = this.score;
+    }, 1000);
   }
 }
 /**

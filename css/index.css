@@ -34,8 +34,44 @@ h1 {
   position: relative;
   border: 1px solid #ccc;
 }
-#nextPieceandCountdown {
-
+#modal {
+  position: absolute;
+  height: 200px;
+  width: 320px;
+  left: 41px;
+  top: calc(50% - 100px);
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  background-color: white;
+  z-index: 2;
+  display: flex;
+  border: 1px solid #cccccc;
+}
+#modal h3 {
+  font-size: 24px;
+}
+#modal h3:first-child {
+  margin-top: 0;
+}
+#modal h3:nth-child(2) {
+  color: red;
+}
+#modal p {
+  margin-top: 0;
+  font-size: 18px;
+  line-height: 28px;
+}
+button {
+  background-color: #f8f8f8;
+  border: 2px solid #cccccc;
+  border-radius: 25px;
+  padding: 10px 50px;
+  font-size: 24px;
+  cursor: pointer;
+}
+button:hover {
+  background-color: #d8d8d8;
 }
 #nextPiece {
   margin-left: 50px;
@@ -66,11 +102,19 @@ h1 {
   z-index: 1;
 }
 .hidden {
-  display: none;
+  display: none !important;
 }
 .gameover {
   background-color: #cccccc !important;
   transition: background-color 1s ease-in-out;
+}
+.fadeout {
+  opacity: 0;
+  transition: opacity 1s ease-in-out;
+}
+.fadein {
+  opacity: 1;
+  transition: opacity 1s ease-in-out;
 }
 footer p {
   text-align: center;
